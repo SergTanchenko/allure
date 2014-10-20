@@ -4,6 +4,7 @@ import my.company.steps.WebDriverSteps;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
@@ -16,8 +17,11 @@ public class SearchTest {
 
     @Before
     public void setUp() throws Exception {
+        DesiredCapabilities caps = new DesiredCapabilities();
+        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "C://phantomjs-1.9.7-windows/phantomjs.exe");
+
         steps = new WebDriverSteps(
-                new PhantomJSDriver(new DesiredCapabilities())
+                new PhantomJSDriver(caps)
         );
     }
 
