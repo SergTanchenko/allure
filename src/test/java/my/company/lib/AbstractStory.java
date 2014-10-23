@@ -1,103 +1,90 @@
 package my.company.lib;
 
 
-import com.thoughtworks.paranamer.NullParanamer;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
 import org.jbehave.core.configuration.Configuration;
-import org.jbehave.core.embedder.StoryControls;
-import org.jbehave.core.failures.PassingUponPendingStep;
-import org.jbehave.core.failures.RethrowingFailure;
-import org.jbehave.core.i18n.LocalizedKeywords;
-import org.jbehave.core.io.AbsolutePathCalculator;
-import org.jbehave.core.io.LoadFromClasspath;
-import org.jbehave.core.io.StoryFinder;
-import org.jbehave.core.io.UnderscoredCamelCaseResolver;
-import org.jbehave.core.junit.JUnitStories;
-import org.jbehave.core.parsers.RegexPrefixCapturingPatternParser;
-import org.jbehave.core.parsers.RegexStoryParser;
-import org.jbehave.core.reporters.FreemarkerViewGenerator;
-import org.jbehave.core.reporters.PrintStreamStepdocReporter;
+import org.jbehave.core.configuration.MostUsefulConfiguration;
+import org.jbehave.core.embedder.Embedder;
+import org.jbehave.core.embedder.EmbedderControls;
+import org.jbehave.core.failures.FailingUponPendingStep;
+import org.jbehave.core.junit.JUnitStory;
+import org.jbehave.core.reporters.Format;
 import org.jbehave.core.reporters.StoryReporterBuilder;
-import org.jbehave.core.steps.*;
+import org.jbehave.core.steps.InjectableStepsFactory;
+import org.jbehave.core.steps.InstanceStepsFactory;
+import org.jbehave.core.steps.ParameterConverters;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.openqa.selenium.WebDriver;
-
-import java.util.List;
-import java.util.Locale;
-
-import static java.util.Arrays.asList;
-import static org.jbehave.core.io.CodeLocations.codeLocationFromClass;
 
 /**
  * Created by Serg on 23.10.2014.
  */
-public abstract class AbstractStory extends JUnitStories {
+public abstract class AbstractStory extends JUnitStory {
 
-    protected WebDriver webDriver;
+    protected final WebDriver webDriver;
 
-    public AbstractStory(final WebDriver driver) {
-        webDriver = driver;
-
+    public AbstractStory() {
+		webDriver = WebDriverFactory.createInstance();
     }
 
+	@Override
+	public Configuration configuration() {
+		Properties viewResources = new Properties();
+		viewResources.put("decorateNonHtml", "true");
 
-    @Test
-    public void run() throws Throwable {
-        super.run();
-    }
+		return new MostUsefulConfiguration()
+		  .usePendingStepStrategy(new FailingUponPendingStep())
+		  .useParameterConverters(new ParameterConverters().addConverters(customConverters()))
+		  .useStoryReporterBuilder(
+			new StoryReporterBuilder().withFailureTrace(true).withDefaultFormats().withViewResources(viewResources)
+			  .withFormats(Format.CONSOLE, Format.HTML, Format.XML));
+	}
 
-    @Override
-    protected List<String> storyPaths() {
-        return new StoryFinder()
-                .findPaths(codeLocationFromClass(this.getClass()).getFile(), asList("**/*.story"), null);
-    }
+	private ParameterConverters.ParameterConverter[] customConverters() {
+		final List<ParameterConverters.ParameterConverter> converters = new ArrayList<>();
+		// Custom date pattern
+		converters.add(new ParameterConverters.DateConverter(new SimpleDateFormat("dd-MM-yyyy")));
+		// Custom boolean converter
+		converters.add(new ParameterConverters.BooleanConverter("tradable", "nontradable"));
+		// Custom table without header converter
+		converters.add(new ParameterConverters.StringListConverter());
+		converters.add(new ParameterConverters.EnumConverter());
+		return converters.toArray(new ParameterConverters.ParameterConverter[converters.size()]);
+	}
 
-    @Override
-    public Configuration configuration() {
-        Configuration configuration = new Configuration() {
-        };
-        configuration.useFailureStrategy(new RethrowingFailure());
-        configuration.useKeywords(new LocalizedKeywords(Locale.ENGLISH));
-        configuration.usePathCalculator(new AbsolutePathCalculator());
-        configuration.useParameterControls(new ParameterControls());
-        configuration.useParameterConverters(new ParameterConverters());
-        configuration.useParanamer(new NullParanamer());
-        configuration.usePendingStepStrategy(new PassingUponPendingStep());
-        configuration.useStepCollector(new MarkUnmatchedStepsAsPending());
-        configuration.useStepdocReporter(new PrintStreamStepdocReporter());
-        configuration.useStepFinder(new StepFinder());
-        configuration.useStepMonitor(new SilentStepMonitor());
-        configuration
-                .useStepPatternParser(new RegexPrefixCapturingPatternParser());
-        configuration.useStoryControls(new StoryControls());
-        configuration.useStoryLoader(new LoadFromClasspath());
-        configuration.useStoryParser(new RegexStoryParser(configuration
-                .keywords()));
-        configuration.useStoryPathResolver(new UnderscoredCamelCaseResolver());
-        configuration.useStoryReporterBuilder(new StoryReporterBuilder());
-        configuration.useViewGenerator(new FreemarkerViewGenerator());
+	public abstract Object[] requiredSteps();
 
-        return configuration;
-    }
+	@Override
+	public Embedder configuredEmbedder() {
+		final EmbedderControls controls = new EmbedderControls()
+		  .doIgnoreFailureInStories(false)
+		  .doIgnoreFailureInView(true)
+		  .doGenerateViewAfterStories(true);
 
-    @Override
-    public InjectableStepsFactory stepsFactory() {
-        return new InstanceStepsFactory(configuration(), requiredSteps());
-    }
+		final Embedder embedder = super.configuredEmbedder();
+		embedder.useEmbedderControls(controls);
 
-    public abstract Object[] requiredSteps();
+		return embedder;
+	}
+
+	@Override
+	public InjectableStepsFactory stepsFactory() {
+		return new InstanceStepsFactory(configuration(), requiredSteps());
+	}
 
 
-    @Before
-    public void setUp() {
+	@Before
+	public void beforeStories() {
+	}
 
-
-    }
-
-    @After
-    public void after() {
-        webDriver.quit();
-    }
+	@After
+	public void tearDown() {
+		webDriver.quit();
+	}
 
 }

@@ -9,16 +9,10 @@ import org.openqa.selenium.WebDriver;
  */
 public class SimpleStory extends AbstractStory {
 
-    public SimpleStory(WebDriver driver) {
-        super(driver);
-    }
-
     @Override
     public Object[] requiredSteps() {
         return new Object[]{
                 new SimpleSteps(webDriver)
         };
     }
-
-
 }
