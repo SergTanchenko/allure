@@ -1,16 +1,15 @@
-package my.company.tests;
+package my.company.stories;
 
 import my.company.lib.AbstractStory;
 import my.company.steps.SimpleSteps;
-import org.openqa.selenium.WebDriver;
 
 /**
  * Created by Serg on 22.10.2014.
  */
-public class SimpleStory extends AbstractStory {
+public class SimpleTest extends AbstractStory {
 
-    public SimpleStory(WebDriver driver) {
-        super(driver);
+    public SimpleTest() {
+        super();
     }
 
     @Override

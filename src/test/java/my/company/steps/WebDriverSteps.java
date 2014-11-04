@@ -1,5 +1,6 @@
 package my.company.steps;
 
+import my.company.lib.AbstractSteps;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -13,31 +14,28 @@ import java.io.File;
  * @author Dmitry Baev charlie@yandex-team.ru
  *         Date: 28.10.13
  */
-public class WebDriverSteps {
-
-    public WebDriver driver;
-
-    public WebDriverSteps(WebDriver driver) {
-        this.driver = driver;
+public class WebDriverSteps extends AbstractSteps {
+    public WebDriverSteps(WebDriver webDriver) {
+        super(webDriver);
     }
 
     @Step
     public void openMainPage() {
-        driver.get("http://ya.ru");
+        webDriver.get("http://ya.ru");
     }
 
     @Step
     public void search(String text) {
-        driver.findElement(By.id("text")).sendKeys(text);
-        driver.findElement(By.className("b-form-button__input")).submit();
+        webDriver.findElement(By.id("text")).sendKeys(text);
+        webDriver.findElement(By.className("b-form-button__input")).submit();
     }
 
     @Attachment(type = "image/png")
     public File makeScreenshot() {
-        return ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        return ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.FILE);
     }
 
     public void quit() {
-        driver.quit();
+        webDriver.quit();
     }
 }

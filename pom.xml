@@ -3,147 +3,38 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>ru.yandex.qatools.allure</groupId>
-    <artifactId>allure-junit-example</artifactId>
-    <version>1.0-SNAPSHOT</version>
+
+    <groupId>org.automation.dojo</groupId>
+    <artifactId>template-java</artifactId>
+    <version>1.1</version>
 
     <properties>
         <allure.version>1.4.0</allure.version>
-        <aspectj.version>1.7.4</aspectj.version>
-        <jbehave-core.version>3.9.5</jbehave-core.version>
-        <selenium.version>2.43.1</selenium.version>
 
-        <compiler.version>1.7</compiler.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <name>Allure JUnit Example</name>
-    <description>Allure JUnit and WebDriver Usage Example</description>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-archetype-plugin</artifactId>
-                <version>2.2</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.0</version>
-                <configuration>
-                    <source>${compiler.version}</source>
-                    <target>${compiler.version}</target>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>unpack-jbehave-site-resources</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.jbehave.site</groupId>
-                                    <artifactId>jbehave-site-resources</artifactId>
-                                    <version>3.1.1</version>
-                                    <type>zip</type>
-                                    <outputDirectory>${project.build.directory}/jbehave/view</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>unpack-jbehave-reports-resources</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.jbehave</groupId>
-                                    <artifactId>jbehave-core</artifactId>
-                                    <version>3.1.2</version>
-                                    <outputDirectory>${project.build.directory}/jbehave/view</outputDirectory>
-                                    <includes>**\/*.css,**\/*.ftl,**\/*.js</includes>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.14</version>
-                <configuration>
-                    <testFailureIgnore>false</testFailureIgnore>
-                    <argLine>
-                        -javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar
-                    </argLine>
-                    <properties>
-                        <property>
-                            <name>listener</name>
-                            <value>ru.yandex.qatools.allure.junit.AllureRunListener</value>
-                        </property>
-                    </properties>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjweaver</artifactId>
-                        <version>${aspectj.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
-    </build>
-
-    <reporting>
-        <excludeDefaults>true</excludeDefaults>
-        <plugins>
-            <plugin>
-                <groupId>ru.yandex.qatools.allure</groupId>
-                <artifactId>allure-maven-plugin</artifactId>
-                <version>${allure.version}</version>
-            </plugin>
-        </plugins>
-    </reporting>
-
+    <!--<repositories>-->
+    <!--<repository>-->
+    <!--<id>my-local-repo</id>-->
+    <!--<url>file://${basedir}/lib</url>-->
+    <!--</repository>-->
+    <!--</repositories>-->
     <dependencies>
         <dependency>
-            <groupId>ru.yandex.qatools.allure</groupId>
-            <artifactId>allure-junit-adaptor</artifactId>
-            <version>${allure.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.detro.ghostdriver</groupId>
-            <artifactId>phantomjsdriver</artifactId>
-            <version>1.0.4</version>
-        </dependency>
-        <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-chrome-driver</artifactId>
-            <version>${selenium.version}</version>
+            <artifactId>selenium-java</artifactId>
+            <version>2.43.1</version>
         </dependency>
         <dependency>
             <groupId>org.jbehave</groupId>
             <artifactId>jbehave-core</artifactId>
-            <version>${jbehave-core.version}</version>
+            <version>3.9.5</version>
         </dependency>
-
         <dependency>
-            <groupId>de.codecentric</groupId>
-            <artifactId>jbehave-junit-runner</artifactId>
-            <version>1.1.2</version>
+            <groupId>ru.yandex.qatools.allure</groupId>
+            <artifactId>allure-junit-adaptor</artifactId>
+            <version>${allure.version}</version>
         </dependency>
     </dependencies>
 </project>
