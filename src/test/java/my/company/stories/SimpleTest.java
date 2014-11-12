@@ -6,7 +6,7 @@ import my.company.steps.SimpleSteps;
 /**
  * Created by Serg on 22.10.2014.
  */
-public class SimpleStory extends AbstractStory {
+public class SimpleTest extends AbstractStory {
 
     @Override
     public Object[] requiredSteps() {
